@@ -195,4 +195,4 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
- ALLOWED_HOSTS = ['localhost', '<your_app_name>.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', 'drf-productivity-app.herokuapp.com']
