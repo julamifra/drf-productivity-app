@@ -1,7 +1,7 @@
 from django.http import Http404
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
-# from rest_framework.views import APIView
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Task
 from .serializers import TaskSerializer
 from drf_productivity_app.permissions import IsOwnerOrReadOnly
@@ -10,69 +10,24 @@ from drf_productivity_app.permissions import IsOwnerOrReadOnly
 class TasksList(generics.ListCreateAPIView):
     serializer_class = TaskSerializer
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly
     ]
     queryset = Task.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-    # def get(self, request):
-    #     tasks = Task.objects.all()
-    #     serializer = TaskSerializer(
-    #         tasks, many=True, context={'request': request}
-    #     )
-    #     return Response(serializer.data)
+    filter_backends = [
+        DjangoFilterBackend
+    ]
 
-    # def post(self, request):
-    #     serializer = TaskSerializer(
-    #         data=request.data, context={'request': request}
-    #     )
-    #     if serializer.is_valid():
-    #         serializer.save(owner=request.user)
-    #         return Response(
-    #             serializer.data, status=status.HTTP_201_CREATED
-    #         )
-    #     return Response(
-    #         serializer.errors, status=status.HTTP_400_BAD_REQUEST
-    #     )
+    filterset_fields = [
+        'owner__profile'
+    ]
 
 
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     serializer_class = TaskSerializer
     queryset = Task.objects.all()
-
-    # def get_object(self, pk):
-    #     try:
-    #         task = Task.objects.get(pk=pk)
-    #         self.check_object_permissions(self.request, task)
-    #         return task
-    #     except Task.DoesNotExist:
-    #         raise Http404
-
-    # def get(self, request, pk):
-    #     task = self.get_object(pk)
-    #     serializer = TaskSerializer(
-    #         task, context={'request': request}
-    #     )
-    #     return Response(serializer.data)
-
-    # def put(self, request, pk):
-    #     task = self.get_object(pk)
-    #     serializer = TaskSerializer(
-    #         task, data=request.data, context={'request': request}
-    #     )
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(
-    #         serializer.errors, status=status.HTTP_400_BAD_REQUEST
-    #     )
-
-    # def delete(self, request, pk):
-    #     task = self.get_object(pk)
-    #     task.delete()
-    #     return Response(
-    #         status=status.HTTP_204_NO_CONTENT
-    #     )
