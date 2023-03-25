@@ -14,6 +14,7 @@ class TasksList(generics.ListCreateAPIView):
         IsOwnerOrReadOnly
     ]
     queryset = Task.objects.all()
+    pagination.PageNumberPagination.page_size = 8
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
