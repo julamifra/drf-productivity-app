@@ -20,4 +20,4 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommentDetailSerializer(CommentSerializer):
-    post = serializers.ReadOnlyField(source='task.id')
+    task = serializers.ReadOnlyField(source='task.id')
